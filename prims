@@ -1,0 +1,46 @@
+def prim(graph, start_node):
+    mst = []  # Minimum Spanning Tree ko store karne ke liye empty list
+    visited = {start_node}  # Start node ko visited set mein daalna
+    edges = []  # Edges ko store karne ke liye empty list
+
+    # Start node ke saare neighbors ko edges list mein daal rahe hain
+    for neighbor, weight in graph[start_node]:
+        edges.append((weight, start_node, neighbor))  # (weight, start_node, neighbor) ko list mein daal rahe hain
+
+    while edges:  # Jab tak edges list empty nahi hoti
+        edges.sort()  # Edges ko unke weight ke according sort kar rahe hain
+        weight, from_node, to_node = edges.pop(0)  # Sabse minimum weight wale edge ko remove kar rahe hain
+
+        # Agar "to_node" ko abhi tak visit nahi kiya gaya, to usse visit karenge
+        if to_node not in visited:  
+            visited.add(to_node)  # "to_node" ko visited set mein add kar rahe hain
+            mst.append((from_node, to_node, weight))  # Is edge ko MST mein add kar rahe hain
+
+            # Ab naye node ke neighbors ko edges mein daal rahe hain
+            for neighbor, weight in graph[to_node]:  # Naye node ke neighbors ko check kar rahe hain
+                if neighbor not in visited:  # Agar neighbor visit nahi kiya gaya
+                    edges.append((weight, to_node, neighbor))  # Us edge ko edges list mein add kar rahe hain
+
+    return mst  # Final Minimum Spanning Tree (MST) return kar rahe hain
+
+# User se graph ka input lena
+n = int(input("Enter number of edges: "))  # Kitni edges hain graph mein
+graph = {}
+
+# Har edge ko input karke graph mein daal rahe hain
+for _ in range(n):
+    u, v, cost = input("Enter edge (node1 node2 cost): ").split()
+    cost = int(cost)  # Cost ko integer mein convert kar rahe hain
+    if u not in graph:
+        graph[u] = []  # Agar node u graph mein nahi hai, toh usse add kar rahe hain
+    if v not in graph:
+        graph[v] = []  # Agar node v graph mein nahi hai, toh usse add kar rahe hain
+    graph[u].append((v, cost))  # Undirected graph mein dono direction mein edge add karte hain
+    graph[v].append((u, cost))  # v se u ko bhi edge daal rahe hain
+
+# Start node ko input le rahe hain
+start_node = input("Enter start node: ")  
+mst = prim(graph, start_node)  # Prim's algorithm run kar rahe hain
+
+# Output: Minimum Spanning Tree ke edges
+print("Prim's MST:", mst)

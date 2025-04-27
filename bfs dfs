@@ -1,0 +1,59 @@
+from collections import defaultdict, deque
+
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(list)  # Graph ko store karne ke liye defaultdict
+
+    # Add edge function to add an undirected edge
+    def add_edge(self, u, v):
+        self.graph[u].append(v)  # u se v ko connect karte hain
+        self.graph[v].append(u)  # v se u ko bhi connect karte hain (undirected edge)
+
+    # BFS function to perform breadth-first search
+    def bfs(self, start):
+        visited = set()  # Visited nodes ko store karne ke liye set
+        queue = deque([start])  # Queue mein start node ko daalte hain
+        visited.add(start)  # Start node ko visited set mein daalna
+
+        while queue:
+            node = queue.popleft()  # Queue se ek node nikaalna
+            print(node, end=" ")  # Current node ko print karna
+
+            # Node ke neighbors ko visit karna
+            for neighbor in self.graph[node]:
+                if neighbor not in visited:  # Agar neighbor visit nahi kiya hai
+                    visited.add(neighbor)  # Neighbor ko visited mein daalna
+                    queue.append(neighbor)  # Neighbor ko queue mein daalna
+
+    # DFS function to perform depth-first search (recursive version)
+    def dfs(self, node, visited):
+        visited.add(node)  # Current node ko visited set mein daalna
+        print(node, end=" ")  # Current node ko print karna
+
+        # Node ke neighbors ko recursively visit karna
+        for neighbor in self.graph[node]:
+            if neighbor not in visited:  # Agar neighbor visit nahi kiya hai
+                self.dfs(neighbor, visited)  # Recursively DFS call
+
+# Graph ka object bana rahe hain
+g = Graph()
+
+# User input ke liye number of edges
+n = int(input("Enter number of edges: "))
+print("Enter edges (u v):")
+
+# Edges ko input karte hain aur graph mein add karte hain
+for _ in range(n):
+    u, v = map(int, input().split())  # u aur v ko input karna
+    g.add_edge(u, v)
+
+# User se starting node input karte hain
+start = int(input("Enter starting node for BFS: "))
+print("BFS traversal: ", end="")
+g.bfs(start)  # Perform BFS traversal
+print()
+
+visited = set()  # DFS ke liye visited set initialize karte hain
+start = int(input("Enter starting node for DFS: "))
+print("DFS traversal: ", end="")
+g.dfs(start, visited)  # Perform DFS traversal (recursive)

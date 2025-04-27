@@ -1,0 +1,62 @@
+# Find karne ka function (root parent dhoondhne ke liye)
+def find_parent(parent, node):
+    if parent[node] != node:
+        parent[node] = find_parent(parent, parent[node])
+    return parent[node]
+
+# Union karne ka function (2 nodes ko jodne ke liye)
+def union(parent, rank, node1, node2):
+    root1 = find_parent(parent, node1)
+    root2 = find_parent(parent, node2)
+    
+    if rank[root1] < rank[root2]:
+        parent[root1] = root2
+    elif rank[root1] > rank[root2]:
+        parent[root2] = root1
+    else:
+        parent[root2] = root1
+        rank[root1] += 1
+
+# Kruskal algorithm
+def kruskal(edges, total_nodes):
+    mst = []  # Minimum spanning tree ka result
+    parent = {}
+    rank = {}
+
+    # Sab nodes ka parent apne aap ko banate hain
+    for node in total_nodes:
+        parent[node] = node
+        rank[node] = 0
+
+    # Edges ko cost ke basis pe sort karte hain
+    edges.sort(key=lambda x: x[2])
+
+    for edge in edges:
+        from_node, to_node, weight = edge
+        if find_parent(parent, from_node) != find_parent(parent, to_node):
+            union(parent, rank, from_node, to_node)
+            mst.append(edge)
+
+    return mst
+
+# ----------- Input from user -----------
+
+n = int(input("Kitni edges hain graph mein? "))
+edges = []
+
+print("Har edge ke liye input do (start_node end_node cost):")
+for _ in range(n):
+    u, v, cost = input().split()
+    cost = int(cost)
+    edges.append((u, v, cost))
+
+nodes = set()
+for u, v, _ in edges:
+    nodes.add(u)
+    nodes.add(v)
+
+result = kruskal(edges, nodes)
+
+print("\nMinimum Spanning Tree edges:")
+for from_node, to_node, weight in result:
+    print(f"{from_node} -- {to_node} : {weight}")
